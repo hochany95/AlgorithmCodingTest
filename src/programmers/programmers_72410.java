@@ -65,5 +65,6 @@ public class programmers_72410 {
         Scanner sc = new Scanner(System.in);
         String new_id = sc.next();
         System.out.println(solution(new_id));
+
     }
 }
