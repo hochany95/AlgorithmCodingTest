@@ -1,4 +1,4 @@
-package algorithm.baekjoon;
+package baekjoonAlgorithm;
 import java.util.*;
 public class baekjoon_2789 {
 
