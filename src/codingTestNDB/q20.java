@@ -10,5 +10,8 @@ public class q20 {
                 map[i][j] = sc.nextInt();
             }
         }
+
+        //test?
+        System.out.println("Test22");
     }
 }
