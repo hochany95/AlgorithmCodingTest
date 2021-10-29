@@ -1,7 +1,6 @@
 package baekjoonAlgorithm;
 
 import java.util.*;
-
 class Position_16234 {
     private int x, y;
 
