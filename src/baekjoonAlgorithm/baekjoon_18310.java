@@ -9,14 +9,8 @@ public class baekjoon_18310 {
         for (int i=0; i<n; i++){
             antenna.add(sc.nextInt());
         }
-
         Collections.sort(antenna);
         int half = (n%2 == 1)? n/2 : n/2 - 1;
-
-//        int min = (int)1e9;
-//        int ans = -1;
-//
-
         System.out.println(antenna.get(half));
     }
 }
