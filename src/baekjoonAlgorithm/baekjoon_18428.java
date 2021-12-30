@@ -2,10 +2,10 @@ package baekjoonAlgorithm;
 
 import java.util.*;
 
-class Position {
+class Position_18428 {
     private int r, c;
 
-    public Position(int r, int c) {
+    public Position_18428(int r, int c) {
         this.r = r;
         this.c = c;
     }
@@ -21,16 +21,16 @@ class Position {
 
 public class baekjoon_18428 {
 
-    public static ArrayList<Position> teacher = new ArrayList<>();
-    public static ArrayList<ArrayList<Position>> possibleComb = new ArrayList<>();
+    public static ArrayList<Position_18428> teacher = new ArrayList<>();
+    public static ArrayList<ArrayList<Position_18428>> possibleComb = new ArrayList<>();
     public static int[] dx = {1, 0, -1, 0};
     public static int[] dy = {0, 1, 0, -1};
 
-    public static void getPossible(char[][] map, Position[] output, int start, int n, int depth) {
+    public static void getPossible(char[][] map, Position_18428[] output, int start, int n, int depth) {
         if (depth == 3) {
-            ArrayList<Position> temp = new ArrayList<>();
+            ArrayList<Position_18428> temp = new ArrayList<>();
             for (int i = 0; i < 3; i++) {
-                temp.add(new Position(output[i].getR(), output[i].getC()));
+                temp.add(new Position_18428(output[i].getR(), output[i].getC()));
             }
             possibleComb.add(temp);
             return;
@@ -41,14 +41,14 @@ public class baekjoon_18428 {
             int nc = i % n;
             if (map[nr][nc] == 'X') {
                 map[nr][nc] = 'O';
-                output[depth] = new Position(nr, nc);
+                output[depth] = new Position_18428(nr, nc);
                 getPossible(map, output, i + 1, n, depth + 1);
                 map[nr][nc] = 'X';
             }
         }
     }
 
-    public static boolean checkAnswer(char[][] map, ArrayList<Position> teacher) {
+    public static boolean checkAnswer(char[][] map, ArrayList<Position_18428> teacher) {
         for (int i = 0; i < teacher.size(); i++) {
             for (int j = 0; j < 4; j++) {
                 int nx = teacher.get(i).getR();
@@ -77,7 +77,7 @@ public class baekjoon_18428 {
             for (int j = 0; j < n; j++) {
                 map[i][j] = sc.next().charAt(0);
                 if(map[i][j] == 'T')
-                    teacher.add(new Position(i, j));
+                    teacher.add(new Position_18428(i, j));
             }
         }
 
@@ -90,14 +90,14 @@ public class baekjoon_18428 {
 //        }
 
 
-        Position[] output = new Position[3];
+        Position_18428[] output = new Position_18428[3];
         getPossible(map, output, 0, n, 0);//벽 설치 가능 조합 생성
 //        System.out.println("가능한 조합의 수 ; " + possibleComb.size());
 
         boolean answer = false;
         for (int i = 0; i < possibleComb.size(); i++) {
             for (int j = 0; j < 3; j++) {
-                Position p = possibleComb.get(i).get(j);
+                Position_18428 p = possibleComb.get(i).get(j);
                 map[p.getR()][p.getC()] = 'D';//디펜서 설치
             }
             if (checkAnswer(map, teacher)) {//현재 조합으로 가능하면 yes반환 후 종료
@@ -113,7 +113,7 @@ public class baekjoon_18428 {
                 break;
             } else {
                 for (int j = 0; j < 3; j++) {
-                    Position p = possibleComb.get(i).get(j);
+                    Position_18428 p = possibleComb.get(i).get(j);
                     map[p.getR()][p.getC()] = 'X';
                 }
 

@@ -1,10 +1,10 @@
 package baekjoonAlgorithm;
 
 import java.util.*;
-class Score implements Comparable<Score>{
+class Score_10825 implements Comparable<Score_10825>{
     private String name;
     private int kor, eng, math;
-    public Score(String name, int kor, int eng, int math){
+    public Score_10825(String name, int kor, int eng, int math){
         this.name = name;
         this.kor = kor;
         this.eng = eng;
@@ -15,7 +15,7 @@ class Score implements Comparable<Score>{
         return name;
     }
     @Override
-    public int compareTo(Score s){
+    public int compareTo(Score_10825 s){
         if(this.kor != s.kor) return Integer.compare(s.kor, this.kor);
         else if(this.eng != s.eng) return Integer.compare(this.eng, s.eng);
         else if(this.math != s.math) return Integer.compare(s.math, this.math);
@@ -27,14 +27,14 @@ public class baekjoon_10825 {
         Scanner sc = new Scanner(System.in);
          int n = sc.nextInt();
          sc.nextLine();
-         ArrayList<Score> list = new ArrayList<>();
+         ArrayList<Score_10825> list = new ArrayList<>();
          for(int i=0; i<n; i++){
              String[] line = sc.nextLine().split(" ");
              String name = line[0];
              int kor = Integer.parseInt(line[1]);
              int eng = Integer.parseInt(line[2]);
              int math = Integer.parseInt(line[3]);
-             list.add(new Score(name, kor, eng, math));
+             list.add(new Score_10825(name, kor, eng, math));
          }
          Collections.sort(list);
          for(int i=0; i<n; i++)
