@@ -1,124 +1,110 @@
 package baekjoonAlgorithm;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
-
-class Position_18428 {
-    private int r, c;
-
-    public Position_18428(int r, int c) {
-        this.r = r;
-        this.c = c;
-    }
-
-    public int getC() {
-        return this.c;
-    }
-
-    public int getR() {
-        return this.r;
-    }
-}
 
 public class baekjoon_18428 {
 
-    public static ArrayList<Position_18428> teacher = new ArrayList<>();
-    public static ArrayList<ArrayList<Position_18428>> possibleComb = new ArrayList<>();
-    public static int[] dx = {1, 0, -1, 0};
-    public static int[] dy = {0, 1, 0, -1};
+    public static int n;
+    public static boolean possible;
 
-    public static void getPossible(char[][] map, Position_18428[] output, int start, int n, int depth) {
-        if (depth == 3) {
-            ArrayList<Position_18428> temp = new ArrayList<>();
-            for (int i = 0; i < 3; i++) {
-                temp.add(new Position_18428(output[i].getR(), output[i].getC()));
+    public static int[] dr = {1, 0, -1, 0};
+    public static int[] dc = {0, 1, 0, -1};
+    public static ArrayList<Position> tList = new ArrayList<>();
+
+    public static class Position{
+        private int r, c;
+
+        public Position(int r, int c) {
+            this.r = r;
+            this.c = c;
+        }
+
+        public int getR() {
+            return r;
+        }
+
+        public int getC() {
+            return c;
+        }
+    }
+
+    public static boolean checkDirection(String[][] map, Position p, int d) {
+        int n = map.length;
+
+        int r = p.getR();
+        int c = p.getC();
+        int nr = r;
+        int nc = c;
+
+        while (true) {
+            nr = nr + dr[d];
+            nc = nc + dc[d];
+            if (nr < 0 || nr >= n || nc < 0 || nc >= n) {
+                return true;
             }
-            possibleComb.add(temp);
+            if(map[nr][nc].equals("S"))
+                return false;
+            if (map[nr][nc].equals("O")) {
+                return true;
+            }
+        }
+    }
+
+    public static boolean isPossible (String[][] map) {
+
+        boolean ans = true;
+        for (int i = 0; i < tList.size(); i++) {
+            Position p = tList.get(i);//교사마다 확인인
+
+            for (int j = 0; j < 4; j++) {
+                if (!checkDirection(map, p, j)) {
+                    ans = false;
+                }
+            }
+        }
+        return ans;
+
+    }
+    public static void dfs(String[][] map, int count) {
+        if (count == 3) {
+            if(isPossible(map))
+                possible = true;
             return;
         }
 
-        for (int i = start; i < n * n; i++) {
-            int nr = i / n;
-            int nc = i % n;
-            if (map[nr][nc] == 'X') {
-                map[nr][nc] = 'O';
-                output[depth] = new Position_18428(nr, nc);
-                getPossible(map, output, i + 1, n, depth + 1);
-                map[nr][nc] = 'X';
-            }
-        }
-    }
-
-    public static boolean checkAnswer(char[][] map, ArrayList<Position_18428> teacher) {
-        for (int i = 0; i < teacher.size(); i++) {
-            for (int j = 0; j < 4; j++) {
-                int nx = teacher.get(i).getR();
-                int ny = teacher.get(i).getC();
-                while (true) {
-                    if (nx < 0 || nx >= map.length || ny < 0 || ny >= map.length) {
-                        break;
-                    }
-                    if (map[nx][ny] == 'D') break;
-                    if (map[nx][ny] == 'S') {
-                        return false;
-                    }
-                    nx = nx + dx[j];
-                    ny = ny + dy[j];
-                }
-            }
-        }
-        return true;
-    }
-
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n = sc.nextInt();
-        char[][] map = new char[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                map[i][j] = sc.next().charAt(0);
-                if(map[i][j] == 'T')
-                    teacher.add(new Position_18428(i, j));
-            }
-        }
-
-//        System.out.println("======map========");
-//        for (int i = 0; i < n; i++) {
-//            for (int j = 0; j < n; j++) {
-//                System.out.print(map[i][j] + " ");
-//            }
-//            System.out.println();
-//        }
-
-
-        Position_18428[] output = new Position_18428[3];
-        getPossible(map, output, 0, n, 0);//벽 설치 가능 조합 생성
-//        System.out.println("가능한 조합의 수 ; " + possibleComb.size());
-
-        boolean answer = false;
-        for (int i = 0; i < possibleComb.size(); i++) {
-            for (int j = 0; j < 3; j++) {
-                Position_18428 p = possibleComb.get(i).get(j);
-                map[p.getR()][p.getC()] = 'D';//디펜서 설치
-            }
-            if (checkAnswer(map, teacher)) {//현재 조합으로 가능하면 yes반환 후 종료
-                answer = true;
-
-//                System.out.println("가눙 조합");
-//                for(int a=0; a<n; a++){
-//                    for(int b=0; b<n; b++){
-//                        System.out.print(map[a][b]+" ");
-//                    }
-//                    System.out.println();
-//                }
-                break;
-            } else {
-                for (int j = 0; j < 3; j++) {
-                    Position_18428 p = possibleComb.get(i).get(j);
-                    map[p.getR()][p.getC()] = 'X';
+                if(map[i][j].equals("X")){
+                    map[i][j] = "O";
+                    count += 1;
+                    dfs(map, count);
+                    count -=1;
+                    map[i][j] = "X";
                 }
-
             }
         }
-        System.out.println(answer ? "YES" : "NO");
+    }
+
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        n = Integer.parseInt(br.readLine());
+        String[][] map = new String[n][n];
+
+        StringTokenizer st;
+        for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine());
+            for (int j = 0; j < n; j++) {
+                map[i][j] = st.nextToken();
+                if (map[i][j].equals("T")) {
+                    tList.add(new Position(i, j));
+                }
+            }
+        }
+
+        dfs(map, 0);
+        System.out.println(possible ? "YES" : "NO");
     }
 }
