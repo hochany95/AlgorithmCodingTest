@@ -1,95 +1,108 @@
 package baekjoonAlgorithm;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
-class Position_16234 {
-    private int x, y;
 
-    public Position_16234(int x, int y) {
-        this.x = x;
-        this.y = y;
-    }
-
-    public int getX() {
-        return this.x;
-    }
-
-    public int getY() {
-        return this.y;
-    }
-}
 
 public class baekjoon_16234 {
-    public static int[] dx = {1, 0, -1, 0};
-    public static int[] dy = {0, 1, 0, -1};
-    public static boolean isUnited = false;
 
-    public static int findUnited(int[][] map, int[][] united, Position_16234 p, int l, int r, int idx) {
-        Queue<Position_16234> q = new LinkedList<>();
-        int len = map.length;
-        int nx, ny, diff;
-        int total = map[p.getX()][p.getY()], count = 1;
-        q.offer(p);
-        while (!q.isEmpty()) {
-            Position_16234 now = q.poll();
-            for (int i = 0; i < 4; i++) {
-                nx = now.getX() + dx[i];
-                ny = now.getY() + dy[i];
-                if (nx < 0 || nx >= len || ny < 0 || ny >= len) continue;
-                diff = Math.abs(map[now.getX()][now.getY()] - map[nx][ny]);
-                if (united[nx][ny] == 0 && diff >= l && diff <= r) {
-                    isUnited = true;
-                    united[nx][ny] = idx;
-                    q.offer(new Position_16234(nx, ny));
-                    total += map[nx][ny];
-                    count++;
+    public static int[] dr = {1, 0, -1, 0};
+    public static int[] dc = {0, 1, 0, -1};
+    public static int n, l, r;
+
+    public static class City {
+        private int row, col, people;
+
+        public City(int row, int col, int people) {
+            this.row = row;
+            this.col = col;
+            this.people = people;
+        }
+
+        public int getRow() {
+            return row;
+        }
+
+        public int getCol() {
+            return col;
+        }
+
+        public int getPeople() {
+            return people;
+        }
+    }
+
+    public static void dfs(int[][] map, boolean[][] visited, ArrayList<City> cList, int row, int col) {
+
+        int now = map[row][col];
+
+        for (int i = 0; i < 4; i++) {
+            int nr = row + dr[i];
+            int nc = col + dc[i];
+            if (nr >= 0 && nr < n && nc >= 0 && nc < n) {
+                int diff = Math.abs(now - map[nr][nc]);
+                if (!visited[nr][nc] && diff >= l && diff <= r) {
+                    visited[nr][nc] = true;
+                    cList.add(new City(nr, nc, map[nr][nc]));
+                    dfs(map, visited, cList, nr, nc);
                 }
             }
         }
-        return total / count;
     }
 
-    public static void main(String[] args) {
-        Scanner sc = new Scanner(System.in);
-        int n, l, r;
-        n = sc.nextInt();
-        l = sc.nextInt();
-        r = sc.nextInt();
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine());
+        n = Integer.parseInt(st.nextToken());
+        l = Integer.parseInt(st.nextToken());
+        r = Integer.parseInt(st.nextToken());
 
         int[][] map = new int[n][n];
-
         for (int i = 0; i < n; i++) {
+            st = new StringTokenizer(br.readLine());
             for (int j = 0; j < n; j++) {
-                map[i][j] = sc.nextInt();
+                map[i][j] = Integer.parseInt(st.nextToken());
             }
         }
+        int moveCount = 0;
 
-        int[][] united = new int[n][n];//연합 정도 저장
-        int[] moved = new int[n * n + 1];// 연합 이후 idx 에 따른 인구 변화 정보 저장
-        int idx;
-        int answer = 0;//출력 정답
-        while (true) {
-            idx = 1;
+        while (true) {//한번 루프에 이동 완료
+            ArrayList<ArrayList<City>> cities = new ArrayList<>();
+            boolean[][] visited = new boolean[n][n];
             for (int i = 0; i < n; i++) {
                 for (int j = 0; j < n; j++) {
-                    if (united[i][j] == 0) {//연합 확인 못한 나라
-                        united[i][j] = idx;//현재 idx 로 지정
-                        Position_16234 p = new Position_16234(i, j); // 현재 위치
-                        int population = findUnited(map, united, p, l, r, idx);// 현재 위치와 연합되는 나라 확인 및 최종 인구 계산
-                        moved[idx] = population;// 연합 번호별 인구 변화 정보
-                        idx++;// 다음 연합 번호 지정, 반복 수행으로 모든 나라 연합 수행
+                    if (!visited[i][j]) {
+                        visited[i][j] = true;
+                        ArrayList<City> temp = new ArrayList<>();
+                        temp.add(new City(i, j, map[i][j]));
+
+
+                        dfs(map, visited, temp, i, j);
+                        if (temp.size() > 1) {
+                            cities.add(temp);
+                        }
                     }
                 }
             }
-            if (!isUnited) break;//연합된 나라가 없으면 끝
-            isUnited = false;//있으면 다시 초기화
-            answer++;//몇번 이동했는가
-            for (int i = 0; i < n; i++) {
-                for (int j = 0; j < n; j++) {
-                    map[i][j] = moved[united[i][j]];
-                }//연합 정보 확인 후 각 나라 인구 변화 적용
+            if (cities.size() > 0) {
+                moveCount++;
+                for (int i = 0; i < cities.size(); i++) {
+                    int sum = 0;
+                    int div = cities.get(i).size();
+                    for (City c : cities.get(i)) {
+                        sum += c.getPeople();
+                    }
+                    int nPeople = sum / div;
+                    for (City c : cities.get(i)) {
+                        map[c.getRow()][c.getCol()] = nPeople;
+                    }
+                }
+            } else {//개방된 도시 없음
+                break;
             }
-            for (int i = 0; i < n; i++) Arrays.fill(united[i], 0);
         }
-        System.out.println(answer);
+        System.out.println(moveCount);
     }
 }
