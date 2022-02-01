@@ -1,42 +1,50 @@
 package baekjoonAlgorithm;
 
+import java.io.*;
 import java.util.*;
 public class baekjoon_11404 {
+    public static final int INF = (int) 1e9;
 
-    /*
-    * 플로이드 와셜 알고리즘*/
-    public static void main(String[] args){
-        Scanner sc = new Scanner(System.in);
-        final int INF = (int)1e9;
-        int n = sc.nextInt();
-        int m = sc.nextInt();
-        int[][] map = new int[n+1][n+1];
-        for(int i=0; i<=n; i++){
-            Arrays.fill(map[i], INF);
-            map[i][i] = 0;
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(System.out));
+
+        int n = Integer.parseInt(br.readLine());
+        int m = Integer.parseInt(br.readLine());
+        int[][] dist = new int[n + 1][n + 1];
+        for (int i = 0; i <= n; i++) {
+            Arrays.fill(dist[i], INF);
+            dist[i][i] = 0;
         }
 
-        for(int i=0; i<m; i++){
-            int a = sc.nextInt();
-            int b = sc.nextInt();
-            int c = sc.nextInt();
-            if(map[a][b] == INF || map[a][b] > c){
-                map[a][b] = c;
+        StringTokenizer st;
+        for (int i = 0; i < m; i++) {
+            st = new StringTokenizer(br.readLine());
+            int a = Integer.parseInt(st.nextToken());
+            int b = Integer.parseInt(st.nextToken());
+            int c = Integer.parseInt(st.nextToken());
+            if (dist[a][b] > c) {
+                dist[a][b] = c;
             }
-
         }
-        for(int k=1; k<=n; k++){
-            for(int i=1; i<=n; i++){
-                for(int j=1; j<=n; j++){
-                    map[i][j] = Math.min(map[i][j], map[i][k]+map[k][j]);
+
+        for (int k = 1; k <= n; k++) {
+            for (int i = 1; i <= n; i++) {
+                for (int j = 1; j <= n; j++) {
+                    dist[i][j] = Math.min(dist[i][j], dist[i][k] + dist[k][j]);
                 }
             }
         }
-        for(int i=1; i<=n; i++){
-            for(int j=1; j<=n; j++){
-                System.out.print((map[i][j] != INF)? map[i][j]+" " : 0+" ");
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= n; j++) {
+                sb.append(dist[i][j] == INF ? "0 " : dist[i][j] + " ");
             }
-            System.out.println();
+            sb.append("\n");
         }
+        bw.write(sb.toString());
+        bw.flush();
+
     }
 }
